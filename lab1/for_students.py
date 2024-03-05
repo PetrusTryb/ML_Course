@@ -44,14 +44,15 @@ plt.title('Closed-form solution')
 plt.show()
 
 # TODO: standardization
-[x_train_mean, y_train_mean] = [np.mean(x_train), np.mean(y_train)]
-[x_train_std, y_train_std] = [np.std(x_train), np.std(y_train)]
-[x_train, y_train] = [(x_train - x_train_mean) / x_train_std, (y_train - y_train_mean) / y_train_std]
+x_train_mean = np.mean(x_train)
+x_train_std = np.std(x_train)
 
-[x_test, y_test] = [(x_test - x_train_mean) / x_train_std, (y_test - y_train_mean) / y_train_std]
-obs_matrix = np.column_stack((np.ones(x_train.shape), x_train))
+x_train = (x_train - x_train_mean) / x_train_std
+x_test_orig = x_test
+x_test = (x_test - x_train_mean) / x_train_std
 
 # TODO: calculate theta using Batch Gradient Descent
+obs_matrix = np.column_stack((np.ones(x_train.shape), x_train))
 theta_best = np.random.rand(2)
 n = len(y_train)
 gradients = [1, 1]
@@ -61,6 +62,7 @@ while gradients[0] > eps or gradients[1] > eps:
 	gradients = 2/n * obs_matrix.T.dot(obs_matrix.dot(theta_best) - y_train)
 	theta_best = theta_best - learning_rate * gradients
 print('Theta:', theta_best)
+
 # TODO: calculate error
 mse = np.sum(((theta_best[0] + theta_best[1] * x_test) - y_test) ** 2) / len(y_test)
 print('MSE:', mse)
@@ -68,9 +70,10 @@ print('MSE:', mse)
 # plot the regression line
 x = np.linspace(min(x_test), max(x_test), 100)
 y = float(theta_best[0]) + float(theta_best[1]) * x
-plt.plot(x, y, color='red', label=f'y = {theta_best[0]} + {theta_best[1]}x')
+x_orig = x * x_train_std + x_train_mean
+plt.plot(x_orig, y, color='red', label=f'y = {theta_best[0]} + {theta_best[1]}x')
 plt.legend(loc='upper right', fontsize='small')
-plt.scatter(x_test, y_test)
+plt.scatter(x_test_orig, y_test)
 plt.xlabel('Weight')
 plt.ylabel('MPG')
 plt.title('Batch Gradient Descent')
