@@ -1,0 +1,3 @@
+Best solution: ['Emerald belt', 'Fossil', 'Helmet', 'Knife', 'Long sword', 'Necklace', 'Perls', 'Uniform', 'Venom potion', 'Cross bow', 'Zinc cup']
+Best solution value: 13692887
+Time:  1727.925490617752
