@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from data import get_data, inspect_data, split_data
 
 data = get_data()
+print("got data")
 #inspect_data(data)
 
 train_data, test_data = split_data(data)
@@ -46,34 +47,41 @@ plt.show()
 # TODO: standardization
 x_train_mean = np.mean(x_train)
 x_train_std = np.std(x_train)
+x_train_standarized = (x_train - x_train_mean) / x_train_std
 
-x_train = (x_train - x_train_mean) / x_train_std
-x_test_orig = x_test
-x_test = (x_test - x_train_mean) / x_train_std
+y_train_mean = np.mean(y_train)
+y_train_std = np.std(y_train)
+y_train_standarized = (y_train - y_train_mean) / y_train_std
 
 # TODO: calculate theta using Batch Gradient Descent
-obs_matrix = np.column_stack((np.ones(x_train.shape), x_train))
+obs_matrix = np.column_stack((np.ones(x_train.shape), x_train_standarized))
 theta_best = np.random.rand(2)
 n = len(y_train)
 gradients = [1, 1]
-learning_rate = 0.0001
-eps = 0.00000001
-while gradients[0] > eps or gradients[1] > eps:
-	gradients = 2/n * obs_matrix.T.dot(obs_matrix.dot(theta_best) - y_train)
+learning_rate = 0.01
+epochs = 1000
+for i in range(epochs):
+	gradients = 2/n * obs_matrix.T.dot(obs_matrix.dot(theta_best) - y_train_standarized)
 	theta_best = theta_best - learning_rate * gradients
+	if i%100==0:
+		mse = np.sum(((theta_best[0] + theta_best[1] * x_train_standarized) - y_train_standarized) ** 2) / len(y_train)
+		print('MSE:',mse)
 print('Theta:', theta_best)
 
 # TODO: calculate error
-mse = np.sum(((theta_best[0] + theta_best[1] * x_test) - y_test) ** 2) / len(y_test)
+x_test_standarized = (x_test - x_train_mean) / x_train_std
+y_test_pred = float(theta_best[0]) + float(theta_best[1]) * x_test_standarized
+y_test_rest = y_test_pred * y_train_std + y_train_mean
+mse = np.sum((y_test_rest - y_test) ** 2) / len(y_test)
 print('MSE:', mse)
 
 # plot the regression line
 x = np.linspace(min(x_test), max(x_test), 100)
-y = float(theta_best[0]) + float(theta_best[1]) * x
-x_orig = x * x_train_std + x_train_mean
-plt.plot(x_orig, y, color='red', label=f'y = {theta_best[0]} + {theta_best[1]}x')
+y = float(theta_best[0]) + float(theta_best[1]) * ((x-x_train_mean)/x_train_std)
+y = y*y_train_std + y_train_mean
+plt.plot(x, y, color='red', label=f'y = {theta_best[0]} + {theta_best[1]}x')
 plt.legend(loc='upper right', fontsize='small')
-plt.scatter(x_test_orig, y_test)
+plt.scatter(x_test, y_test)
 plt.xlabel('Weight')
 plt.ylabel('MPG')
 plt.title('Batch Gradient Descent')
