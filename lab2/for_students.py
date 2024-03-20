@@ -31,8 +31,8 @@ print(items)
 population_size = 100
 generations = 200
 n_selection = 20
-n_elite = 3
-mutation_rate = 0.03
+n_elite = 5
+mutation_rate = 0.05
 
 start_time = time.time()
 best_solution = None
@@ -58,7 +58,7 @@ for _ in range(generations):
                 children[i][j] = not children[i][j]
     
     elite = sorted(population, key=lambda individual: fitness(items, knapsack_max_capacity, individual), reverse=True)[:n_elite]
-    population = elite + children
+    population = children + elite
 
     best_individual, best_individual_fitness = population_best(items, knapsack_max_capacity, population)
     if best_individual_fitness > best_fitness:
@@ -83,6 +83,7 @@ for i, population in enumerate(population_history):
     population_fitnesses.sort(reverse=True)
     y.extend(population_fitnesses[:plotted_individuals])
 plt.scatter(x, y, marker='.')
+plt.text(100, best_fitness+10000, f'Best solution value: {best_fitness}', fontdict={'fontsize': 14})
 plt.plot(best_history, 'r')
 plt.xlabel('Generation')
 plt.ylabel('Fitness')
