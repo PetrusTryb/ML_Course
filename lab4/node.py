@@ -25,7 +25,7 @@ class Node:
             right_size = len(right)
             left_gini = 1 - (left_positive / left_size) ** 2 - (1 - left_positive / left_size) ** 2
             right_gini = 1 - (right_positive / right_size) ** 2 - (1 - right_positive / right_size) ** 2
-            gain = (left_size * left_gini + right_size * right_gini) / len(y)
+            gain = 1 - left_size / len(y) * left_gini - right_size / len(y) * right_gini
             if gain > best_gain:
                 best_idx = idx
                 best_gain = gain

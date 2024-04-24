@@ -13,11 +13,12 @@ def main():
     dt.train(*train_data)
     dt.evaluate(*train_data)
     dt.evaluate(*test_data)
-
+    
     rf = RandomForest({"ntrees": 10, "feature_subset": 2, "depth": 14})
     rf.train(*train_data)
     rf.evaluate(*train_data)
     rf.evaluate(*test_data)
+    
 
 if __name__=="__main__":
     main()
