@@ -37,8 +37,8 @@ def evaluate_model(model, x, y):
 def training(model, x, y):
 
     # training hiperparameters
-    n_steps = 50000
-    learning_rate = 0.1        # try different values
+    n_steps = 35000
+    learning_rate = 0.12        # try different values
     minibatch_size = 32
 
     loss_fn = F.binary_cross_entropy
@@ -111,10 +111,14 @@ def classify_spirals(student_id, do_data_inspection=True, do_model_inpection=Tru
     x_train, y_train, x_test, y_test = [torch.from_numpy(x) for x in [x_train, y_train, x_test, y_test]]
 
     # utworzenie modelu
+    #device = torch.device('cuda')
+    #print(device)
+    #exit(0)
     model = TorchMultiLayerNetwork(
         n_in=2,
         n_hiddens=[16, 32, 32, 16],
         n_out=1)
+    #model.to(device)
 
     if load_trained_model:
         model.load_state_dict(torch.load(model_path))
@@ -158,6 +162,10 @@ if __name__ == '__main__':
     student_id = 193557
     torch.manual_seed(student_id)
 
+    #enable cuda
+   
+    #send to device
+    
     classify_spirals(student_id,
                      do_data_inspection=True,
                      do_model_inpection=True,
